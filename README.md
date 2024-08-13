@@ -37,4 +37,4 @@ let packet = IbusPacket::try_from_bytes(&buffer)
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for more details.
+MIT License. See LISCENSE for more details.

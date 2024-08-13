@@ -8,9 +8,9 @@
 use std::error::Error;
 use std::fmt;
 
+#[derive(Debug)]
 pub struct IbusPacket {
-    active_channels: u8,
-    channels: Vec<u16>,
+    channels: [u16; 14],
 }
 
 impl IbusPacket {
@@ -18,47 +18,44 @@ impl IbusPacket {
     ///
     /// Will return an Err value if:
     /// - The lead byte is not `0x20`
+    /// - The second byte is not `0x40`
     /// - The checksum fails  
     pub fn try_from_bytes(bytes: &[u8; 32]) -> Result<Self, ParsingError> {
-        if bytes[0] != 0x20 {
+        if bytes[0] != 0x20 || bytes[1] != 0x40 {
             return Err(ParsingError::InvalidPacket);
         }
-        let active_channels = bytes[1];
-        let mut channels = Vec::<u16>::with_capacity(14);
+
+        let mut channels = [0u16; 14];
 
         let mut channels_iter = bytes[2..30].iter();
         let mut channel_sum = 0u16;
-        for _ in 0..14 {
+        for idx in 0..14 {
             let low_byte = *channels_iter.next().unwrap();
             let high_byte = *channels_iter.next().unwrap();
             let channel = ((high_byte as u16) << 8) | low_byte as u16;
             channel_sum += low_byte as u16 + high_byte as u16;
-            channels.push(channel);
+            channels[idx] = channel;
         }
 
-        channel_sum += active_channels as u16 + bytes[0] as u16;
+        channel_sum += bytes[1] as u16 + bytes[0] as u16;
         let calculated_checksum: u16 = (0xFFFF as u16) - channel_sum;
         let actual_checksum = ((bytes[31] as u16) << 8) | bytes[30] as u16;
         if calculated_checksum == actual_checksum {
-            Ok(IbusPacket {
-                active_channels,
-                channels,
-            })
+            Ok(IbusPacket { channels })
         } else {
             return Err(ParsingError::FailsChecksum);
         }
     }
 
     /// Gets an individual channel's data, which is a value between 1000 and 2000. There are 14
-    /// channels, but only active_channels() of them will have data that changes from 1500 (the
+    /// channels, but only some of them will have data that changes from 1500 (the
     /// default for inactive channels). Returns None if you select a channel out of range.
+    /// Starts indexing at 1
     pub fn get_channel(&self, number: usize) -> Option<&u16> {
         self.channels.get(number - 1)
     }
-
-    /// Returns the amount of channels that data is being sent on
-    pub fn active_channels(&self) -> u8 {
-        self.active_channels
+    pub fn get_all_channels(&self) -> [u16; 14] {
+        self.channels
     }
 }
 
@@ -89,7 +86,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn works_with_correct_package() {
+    fn works_with_correct_packet() {
         let data: [u8; 32] = [
             0x20, 0x40, 0xDB, 0x05, 0xDC, 0x05, 0x54, 0x05, 0xDC, 0x05, 0xE8, 0x03, 0xD0, 0x07,
             0xD2, 0x05, 0xE8, 0x03, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05,
