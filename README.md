@@ -35,6 +35,9 @@ let packet = IbusPacket::try_from_bytes(&buffer)
 
 ```
 
+### Note
+You will have to sync the UART manually. This can be done by iterating byte by byte until you see the IBUS header, then skipping the next packet.
+
 ## License
 
 MIT License. See LISCENSE for more details.
