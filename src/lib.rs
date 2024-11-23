@@ -5,6 +5,8 @@
 //! FlySky IBUS is a serial communications protocol that contains 14 channels of data and a
 //! checksum. Many of their receivers output this protocol.
 
+#![no_std]
+
 use core::error::Error;
 use core::fmt;
 
