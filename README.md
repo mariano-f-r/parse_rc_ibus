@@ -63,8 +63,8 @@ No emojis.
 
 When writing an issue, follow these guidelines:
 
--**Bug Reports**: Prefix your issue with "BUG:". Please describe steps to reproduce, and include which features failed.
--**Feature Requests**: Prefix your issue with "FEATURE:". Please describe in detail how you want your proposed feature to work. Also include code snippets of how you want it to work if possible. If you are requesting that a feature be changed, include how you want the new version of the feature to work.
+- **Bug Reports**: Prefix your issue with "BUG:". Please describe steps to reproduce, and include which features failed.
+- **Feature Requests**: Prefix your issue with "FEATURE:". Please describe in detail how you want your proposed feature to work. Also include code snippets of how you want it to work if possible. If you are requesting that a feature be changed, include how you want the new version of the feature to work.
 
 ## License
 
