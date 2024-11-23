@@ -10,7 +10,7 @@
 use core::error::Error;
 use core::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct IbusPacket {
     channels: [u16; 14],
 }
@@ -61,7 +61,7 @@ impl IbusPacket {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum ParsingError {
     InvalidPacket,
     FailsChecksum,
