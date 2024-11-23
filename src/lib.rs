@@ -10,7 +10,11 @@
 use core::error::Error;
 use core::fmt;
 
+#[cfg(feature = "defmt")]
+use defmt::Format;
+
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct IbusPacket {
     channels: [u16; 14],
 }
@@ -62,6 +66,7 @@ impl IbusPacket {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ParsingError {
     InvalidPacket,
     FailsChecksum,
