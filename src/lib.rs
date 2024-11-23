@@ -5,8 +5,8 @@
 //! FlySky IBUS is a serial communications protocol that contains 14 channels of data and a
 //! checksum. Many of their receivers output this protocol.
 
-use std::error::Error;
-use std::fmt;
+use core::error::Error;
+use core::fmt;
 
 #[derive(Debug)]
 pub struct IbusPacket {
@@ -96,5 +96,27 @@ mod tests {
         let packet = IbusPacket::try_from_bytes(&data).expect("Should be valid packet");
 
         assert_eq!(*packet.get_channel(3).unwrap(), 1364u16);
+    }
+
+    #[test]
+    fn fails_invalid_packet() {
+        let data: [u8; 32] = [0x02; 32];
+
+        let packet = IbusPacket::try_from_bytes(&data);
+
+        assert!(matches!(packet, Err(ParsingError::InvalidPacket)));
+    }
+
+    #[test]
+    fn fails_bad_checksum() {
+        let data: [u8; 32] = [
+            0x20, 0x40, 0xDB, 0x05, 0xDC, 0x05, 0x54, 0x05, 0xDC, 0x05, 0xE8, 0x03, 0xD0, 0x07,
+            0xD2, 0x05, 0xE8, 0x03, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05,
+            0xDC, 0x05, 0xDA, 0xFF,
+        ];
+
+        let packet = IbusPacket::try_from_bytes(&data);
+
+        assert!(matches!(packet, Err(ParsingError::FailsChecksum)));
     }
 }

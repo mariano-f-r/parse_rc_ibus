@@ -2,6 +2,7 @@
 
 A basic parser for the [IBUS RC protocol](http://blog.dsp.id.au/posts/2017/10/22/flysky-ibus-protocol/), written in Rust.
 Ideal for decoding channel data in radio-controlled systems and other applications using the IBUS protocol.
+MSRV is 1.81.
 
 ## Features
 
