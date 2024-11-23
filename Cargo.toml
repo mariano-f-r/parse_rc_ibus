@@ -7,3 +7,7 @@ description = "A simple parser for FlySky IBUS"
 repository = "https://github.com/sergeant-savage/parse_rc_ibus"
 
 [dependencies]
+defmt = { version = "0.3.8", optional = true}
+
+[feature]
+defmt = ["dep:defmt"]
